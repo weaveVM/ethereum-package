@@ -4,21 +4,21 @@ participant_network = import_module("./src/participant_network.star")
 shared_utils = import_module("./src/shared_utils/shared_utils.star")
 static_files = import_module("./src/static_files/static_files.star")
 genesis_constants = import_module(
-    "./src/prelaunch_data_generator/genesis_constants/genesis_constants.star"
+    "./src/prelaunch_data_generator/genesis_constants/genesis_constants.star",
 )
 
 validator_ranges = import_module(
-    "./src/prelaunch_data_generator/validator_keystores/validator_ranges_generator.star"
+    "./src/prelaunch_data_generator/validator_keystores/validator_ranges_generator.star",
 )
 
 transaction_spammer = import_module(
-    "./src/transaction_spammer/transaction_spammer.star"
+    "./src/transaction_spammer/transaction_spammer.star",
 )
 blob_spammer = import_module("./src/blob_spammer/blob_spammer.star")
 spamoor_blob = import_module("./src/spamoor_blob/spamoor_blob.star")
 el_forkmon = import_module("./src/el_forkmon/el_forkmon_launcher.star")
 beacon_metrics_gazer = import_module(
-    "./src/beacon_metrics_gazer/beacon_metrics_gazer_launcher.star"
+    "./src/beacon_metrics_gazer/beacon_metrics_gazer_launcher.star",
 )
 dora = import_module("./src/dora/dora_launcher.star")
 dugtrio = import_module("./src/dugtrio/dugtrio_launcher.star")
@@ -28,38 +28,38 @@ forky = import_module("./src/forky/forky_launcher.star")
 tracoor = import_module("./src/tracoor/tracoor_launcher.star")
 apache = import_module("./src/apache/apache_launcher.star")
 full_beaconchain_explorer = import_module(
-    "./src/full_beaconchain/full_beaconchain_launcher.star"
+    "./src/full_beaconchain/full_beaconchain_launcher.star",
 )
 blockscout = import_module("./src/blockscout/blockscout_launcher.star")
 prometheus = import_module("./src/prometheus/prometheus_launcher.star")
 grafana = import_module("./src/grafana/grafana_launcher.star")
 commit_boost_mev_boost = import_module(
-    "./src/mev/commit-boost/mev_boost/mev_boost_launcher.star"
+    "./src/mev/commit-boost/mev_boost/mev_boost_launcher.star",
 )
 mev_rs_mev_boost = import_module("./src/mev/mev-rs/mev_boost/mev_boost_launcher.star")
 mev_rs_mev_relay = import_module("./src/mev/mev-rs/mev_relay/mev_relay_launcher.star")
 mev_rs_mev_builder = import_module(
-    "./src/mev/mev-rs/mev_builder/mev_builder_launcher.star"
+    "./src/mev/mev-rs/mev_builder/mev_builder_launcher.star",
 )
 flashbots_mev_rbuilder = import_module(
-    "./src/mev/flashbots/mev_builder/mev_builder_launcher.star"
+    "./src/mev/flashbots/mev_builder/mev_builder_launcher.star",
 )
 
 flashbots_mev_boost = import_module(
-    "./src/mev/flashbots/mev_boost/mev_boost_launcher.star"
+    "./src/mev/flashbots/mev_boost/mev_boost_launcher.star",
 )
 flashbots_mev_relay = import_module(
-    "./src/mev/flashbots/mev_relay/mev_relay_launcher.star"
+    "./src/mev/flashbots/mev_relay/mev_relay_launcher.star",
 )
 mock_mev = import_module("./src/mev/flashbots/mock_mev/mock_mev_launcher.star")
 mev_flood = import_module("./src/mev/flashbots/mev_flood/mev_flood_launcher.star")
 mev_custom_flood = import_module(
-    "./src/mev/flashbots/mev_custom_flood/mev_custom_flood_launcher.star"
+    "./src/mev/flashbots/mev_custom_flood/mev_custom_flood_launcher.star",
 )
 broadcaster = import_module("./src/broadcaster/broadcaster.star")
 assertoor = import_module("./src/assertoor/assertoor_launcher.star")
 get_prefunded_accounts = import_module(
-    "./src/prefunded_accounts/get_prefunded_accounts.star"
+    "./src/prefunded_accounts/get_prefunded_accounts.star",
 )
 spamoor = import_module("./src/spamoor/spamoor.star")
 
@@ -73,13 +73,18 @@ HTTP_PORT_ID_FOR_FACT = "http"
 MEV_BOOST_SHOULD_CHECK_RELAY = True
 PATH_TO_PARSED_BEACON_STATE = "/genesis/output/parsedBeaconState.json"
 
-
-def run(plan, args={}):
+def run(plan, args = {}):
     """Launches an arbitrarily complex ethereum testnet based on the arguments provided
 
     Args:
         args: A YAML or JSON argument to configure the network; example https://github.com/ethpandaops/ethereum-package/blob/main/network_params.yaml
     """
+
+    # 1) Upload your BQ config file from local disk into Kurtosis
+    bq_config_artifact = plan.upload_files(
+        src = "bq-config.json",  # Adjust to match your local path
+        name = "bq_config_artifact",
+    )
 
     args_with_right_defaults = input_parser.input_parser(plan, args)
 
@@ -97,28 +102,29 @@ def run(plan, args={}):
 
     prefunded_accounts = genesis_constants.PRE_FUNDED_ACCOUNTS
     if (
-        network_params.preregistered_validator_keys_mnemonic
-        != constants.DEFAULT_MNEMONIC
+        network_params.preregistered_validator_keys_mnemonic !=
+        constants.DEFAULT_MNEMONIC
     ):
         prefunded_accounts = get_prefunded_accounts.get_accounts(
-            plan, network_params.preregistered_validator_keys_mnemonic
+            plan,
+            network_params.preregistered_validator_keys_mnemonic,
         )
 
     grafana_datasource_config_template = read_file(
-        static_files.GRAFANA_DATASOURCE_CONFIG_TEMPLATE_FILEPATH
+        static_files.GRAFANA_DATASOURCE_CONFIG_TEMPLATE_FILEPATH,
     )
     grafana_dashboards_config_template = read_file(
-        static_files.GRAFANA_DASHBOARD_PROVIDERS_CONFIG_TEMPLATE_FILEPATH
+        static_files.GRAFANA_DASHBOARD_PROVIDERS_CONFIG_TEMPLATE_FILEPATH,
     )
     prometheus_additional_metrics_jobs = []
     raw_jwt_secret = read_file(static_files.JWT_PATH_FILEPATH)
     jwt_file = plan.upload_files(
-        src=static_files.JWT_PATH_FILEPATH,
-        name="jwt_file",
+        src = static_files.JWT_PATH_FILEPATH,
+        name = "jwt_file",
     )
     keymanager_file = plan.upload_files(
-        src=static_files.KEYMANAGER_PATH_FILEPATH,
-        name="keymanager_file",
+        src = static_files.KEYMANAGER_PATH_FILEPATH,
+        name = "keymanager_file",
     )
 
     plan.print("Read the prometheus, grafana templates")
@@ -135,8 +141,8 @@ def run(plan, args={}):
             global_node_selectors,
         )
     elif (
-        args_with_right_defaults.mev_type == constants.FLASHBOTS_MEV_TYPE
-        or args_with_right_defaults.mev_type == constants.COMMIT_BOOST_MEV_TYPE
+        args_with_right_defaults.mev_type == constants.FLASHBOTS_MEV_TYPE or
+        args_with_right_defaults.mev_type == constants.COMMIT_BOOST_MEV_TYPE
     ):
         plan.print("Generating flashbots builder config file")
         flashbots_builder_config_file = flashbots_mev_rbuilder.new_builder_config(
@@ -152,8 +158,9 @@ def run(plan, args={}):
 
     plan.print(
         "Launching participant network with {0} participants and the following network params {1}".format(
-            num_participants, network_params
-        )
+            num_participants,
+            network_params,
+        ),
     )
     (
         all_participants,
@@ -173,13 +180,14 @@ def run(plan, args={}):
         global_node_selectors,
         keymanager_enabled,
         parallel_keystore_generation,
+        bq_config_artifact,
     )
 
     plan.print(
         "NODE JSON RPC URI: '{0}:{1}'".format(
             all_participants[0].el_context.ip_addr,
             all_participants[0].el_context.rpc_port_num,
-        )
+        ),
     )
 
     all_el_contexts = []
@@ -194,13 +202,13 @@ def run(plan, args={}):
         all_vc_contexts.append(participant.vc_context)
         all_remote_signer_contexts.append(participant.remote_signer_context)
         all_ethereum_metrics_exporter_contexts.append(
-            participant.ethereum_metrics_exporter_context
+            participant.ethereum_metrics_exporter_context,
         )
         all_xatu_sentry_contexts.append(participant.xatu_sentry_context)
 
     # Generate validator ranges
     validator_ranges_config_template = read_file(
-        static_files.VALIDATOR_RANGES_CONFIG_TEMPLATE_FILEPATH
+        static_files.VALIDATOR_RANGES_CONFIG_TEMPLATE_FILEPATH,
     )
     ranges = validator_ranges.generate_validator_ranges(
         plan,
@@ -229,27 +237,27 @@ def run(plan, args={}):
 
     mev_endpoints = []
     mev_endpoint_names = []
+
     # passed external relays get priority
     # perhaps add mev_type External or remove this
     if (
-        hasattr(participant, "builder_network_params")
-        and participant.builder_network_params != None
+        hasattr(participant, "builder_network_params") and
+        participant.builder_network_params != None
     ):
         mev_endpoints = participant.builder_network_params.relay_end_points
         for idx, mev_endpoint in enumerate(mev_endpoints):
             mev_endpoint_names.append("relay-{0}".format(idx + 1))
-    # otherwise dummy relays spinup if chosen
+
+        # otherwise dummy relays spinup if chosen
     elif (
-        args_with_right_defaults.mev_type
-        and args_with_right_defaults.mev_type == constants.MOCK_MEV_TYPE
+        args_with_right_defaults.mev_type and
+        args_with_right_defaults.mev_type == constants.MOCK_MEV_TYPE
     ):
         el_uri = "{0}:{1}".format(
             all_el_contexts[0].ip_addr,
             all_el_contexts[0].engine_rpc_port_num,
         )
-        beacon_uri = "{0}".format(all_cl_contexts[0].beacon_http_url)[
-            7:
-        ]  # remove http://
+        beacon_uri = "{0}".format(all_cl_contexts[0].beacon_http_url)[7:]  # remove http://
         endpoint = mock_mev.launch_mock_mev(
             plan,
             el_uri,
@@ -262,16 +270,17 @@ def run(plan, args={}):
         mev_endpoints.append(endpoint)
         mev_endpoint_names.append(constants.MOCK_MEV_TYPE)
     elif args_with_right_defaults.mev_type and (
-        args_with_right_defaults.mev_type == constants.FLASHBOTS_MEV_TYPE
-        or args_with_right_defaults.mev_type == constants.MEV_RS_MEV_TYPE
-        or args_with_right_defaults.mev_type == constants.COMMIT_BOOST_MEV_TYPE
+        args_with_right_defaults.mev_type == constants.FLASHBOTS_MEV_TYPE or
+        args_with_right_defaults.mev_type == constants.MEV_RS_MEV_TYPE or
+        args_with_right_defaults.mev_type == constants.COMMIT_BOOST_MEV_TYPE
     ):
         blocksim_uri = "http://{0}:{1}".format(
-            all_el_contexts[-1].ip_addr, all_el_contexts[-1].rpc_port_num
+            all_el_contexts[-1].ip_addr,
+            all_el_contexts[-1].rpc_port_num,
         )
         beacon_uri = all_cl_contexts[-1].beacon_http_url
         beacon_uris = ",".join(
-            ["{0}".format(context.beacon_http_url) for context in all_cl_contexts]
+            ["{0}".format(context.beacon_http_url) for context in all_cl_contexts],
         )
 
         first_cl_client = all_cl_contexts[0]
@@ -286,21 +295,21 @@ def run(plan, args={}):
             global_node_selectors,
         )
         epoch_recipe = GetHttpRequestRecipe(
-            endpoint="/eth/v2/beacon/blocks/head",
-            port_id=HTTP_PORT_ID_FOR_FACT,
-            extract={"epoch": ".data.message.body.attestations[0].data.target.epoch"},
+            endpoint = "/eth/v2/beacon/blocks/head",
+            port_id = HTTP_PORT_ID_FOR_FACT,
+            extract = {"epoch": ".data.message.body.attestations[0].data.target.epoch"},
         )
         plan.wait(
-            recipe=epoch_recipe,
-            field="extract.epoch",
-            assertion=">=",
-            target_value=str(network_params.deneb_fork_epoch),
-            timeout="20m",
-            service_name=first_client_beacon_name,
+            recipe = epoch_recipe,
+            field = "extract.epoch",
+            assertion = ">=",
+            target_value = str(network_params.deneb_fork_epoch),
+            timeout = "20m",
+            service_name = first_client_beacon_name,
         )
         if (
-            args_with_right_defaults.mev_type == constants.FLASHBOTS_MEV_TYPE
-            or args_with_right_defaults.mev_type == constants.COMMIT_BOOST_MEV_TYPE
+            args_with_right_defaults.mev_type == constants.FLASHBOTS_MEV_TYPE or
+            args_with_right_defaults.mev_type == constants.COMMIT_BOOST_MEV_TYPE
         ):
             endpoint = flashbots_mev_relay.launch_mev_relay(
                 plan,
@@ -341,17 +350,18 @@ def run(plan, args={}):
     if mev_endpoints:
         for index, participant in enumerate(all_participants):
             index_str = shared_utils.zfill_custom(
-                index + 1, len(str(len(all_participants)))
+                index + 1,
+                len(str(len(all_participants))),
             )
             plan.print(
                 "args_with_right_defaults.participants[index].validator_count {0}".format(
-                    args_with_right_defaults.participants[index].validator_count
-                )
+                    args_with_right_defaults.participants[index].validator_count,
+                ),
             )
             if args_with_right_defaults.participants[index].validator_count != 0:
                 if (
-                    args_with_right_defaults.mev_type == constants.FLASHBOTS_MEV_TYPE
-                    or args_with_right_defaults.mev_type == constants.MOCK_MEV_TYPE
+                    args_with_right_defaults.mev_type == constants.FLASHBOTS_MEV_TYPE or
+                    args_with_right_defaults.mev_type == constants.MOCK_MEV_TYPE
                 ):
                     mev_boost_launcher = flashbots_mev_boost.new_mev_boost_launcher(
                         MEV_BOOST_SHOULD_CHECK_RELAY,
@@ -424,19 +434,19 @@ def run(plan, args={}):
 
     if len(args_with_right_defaults.additional_services) == 0:
         output = struct(
-            all_participants=all_participants,
-            pre_funded_accounts=prefunded_accounts,
-            network_params=network_params,
-            network_id=network_id,
-            final_genesis_timestamp=final_genesis_timestamp,
-            genesis_validators_root=genesis_validators_root,
+            all_participants = all_participants,
+            pre_funded_accounts = prefunded_accounts,
+            network_params = network_params,
+            network_id = network_id,
+            final_genesis_timestamp = final_genesis_timestamp,
+            genesis_validators_root = genesis_validators_root,
         )
 
         return output
 
     launch_prometheus_grafana = False
     for index, additional_service in enumerate(
-        args_with_right_defaults.additional_services
+        args_with_right_defaults.additional_services,
     ):
         if additional_service == "tx_spammer":
             plan.print("Launching transaction spammer")
@@ -463,12 +473,13 @@ def run(plan, args={}):
                 args_with_right_defaults.tx_spammer_params,
             )
             plan.print("Successfully launched blob spammer")
-        # We need a way to do time.sleep
-        # TODO add code that waits for CL genesis
+            # We need a way to do time.sleep
+            # TODO add code that waits for CL genesis
+
         elif additional_service == "el_forkmon":
             plan.print("Launching el forkmon")
             el_forkmon_config_template = read_file(
-                static_files.EL_FORKMON_CONFIG_TEMPLATE_FILEPATH
+                static_files.EL_FORKMON_CONFIG_TEMPLATE_FILEPATH,
             )
             el_forkmon.launch_el_forkmon(
                 plan,
@@ -495,7 +506,7 @@ def run(plan, args={}):
             )
             launch_prometheus_grafana = True
             prometheus_additional_metrics_jobs.append(
-                beacon_metrics_gazer_prometheus_metrics_job
+                beacon_metrics_gazer_prometheus_metrics_job,
             )
             plan.print("Successfully launched beacon metrics gazer")
         elif additional_service == "blockscout":
@@ -533,7 +544,7 @@ def run(plan, args={}):
         elif additional_service == "dugtrio":
             plan.print("Launching dugtrio")
             dugtrio_config_template = read_file(
-                static_files.DUGTRIO_CONFIG_TEMPLATE_FILEPATH
+                static_files.DUGTRIO_CONFIG_TEMPLATE_FILEPATH,
             )
             dugtrio.launch_dugtrio(
                 plan,
@@ -550,7 +561,7 @@ def run(plan, args={}):
         elif additional_service == "blutgang":
             plan.print("Launching blutgang")
             blutgang_config_template = read_file(
-                static_files.BLUTGANG_CONFIG_TEMPLATE_FILEPATH
+                static_files.BLUTGANG_CONFIG_TEMPLATE_FILEPATH,
             )
             blutgang.launch_blutgang(
                 plan,
@@ -582,7 +593,7 @@ def run(plan, args={}):
         elif additional_service == "forky":
             plan.print("Launching forky")
             forky_config_template = read_file(
-                static_files.FORKY_CONFIG_TEMPLATE_FILEPATH
+                static_files.FORKY_CONFIG_TEMPLATE_FILEPATH,
             )
             forky.launch_forky(
                 plan,
@@ -601,7 +612,7 @@ def run(plan, args={}):
         elif additional_service == "tracoor":
             plan.print("Launching tracoor")
             tracoor_config_template = read_file(
-                static_files.TRACOOR_CONFIG_TEMPLATE_FILEPATH
+                static_files.TRACOOR_CONFIG_TEMPLATE_FILEPATH,
             )
             tracoor.launch_tracoor(
                 plan,
@@ -632,7 +643,7 @@ def run(plan, args={}):
         elif additional_service == "full_beaconchain_explorer":
             plan.print("Launching full-beaconchain-explorer")
             full_beaconchain_explorer_config_template = read_file(
-                static_files.FULL_BEACONCHAIN_CONFIG_TEMPLATE_FILEPATH
+                static_files.FULL_BEACONCHAIN_CONFIG_TEMPLATE_FILEPATH,
             )
             full_beaconchain_explorer.launch_full_beacon(
                 plan,
@@ -652,7 +663,7 @@ def run(plan, args={}):
         elif additional_service == "assertoor":
             plan.print("Launching assertoor")
             assertoor_config_template = read_file(
-                static_files.ASSERTOOR_CONFIG_TEMPLATE_FILEPATH
+                static_files.ASSERTOOR_CONFIG_TEMPLATE_FILEPATH,
             )
             assertoor_params = args_with_right_defaults.assertoor_params
             assertoor.launch_assertoor(
@@ -726,37 +737,35 @@ def run(plan, args={}):
         first_cl_client = all_cl_contexts[0]
         first_client_beacon_name = first_cl_client.beacon_service_name
         epoch_recipe = GetHttpRequestRecipe(
-            endpoint="/eth/v1/beacon/states/head/finality_checkpoints",
-            port_id=HTTP_PORT_ID_FOR_FACT,
-            extract={"finalized_epoch": ".data.finalized.epoch"},
+            endpoint = "/eth/v1/beacon/states/head/finality_checkpoints",
+            port_id = HTTP_PORT_ID_FOR_FACT,
+            extract = {"finalized_epoch": ".data.finalized.epoch"},
         )
         plan.wait(
-            recipe=epoch_recipe,
-            field="extract.finalized_epoch",
-            assertion="!=",
-            target_value="0",
-            timeout="40m",
-            service_name=first_client_beacon_name,
+            recipe = epoch_recipe,
+            field = "extract.finalized_epoch",
+            assertion = "!=",
+            target_value = "0",
+            timeout = "40m",
+            service_name = first_client_beacon_name,
         )
         plan.print("First finalized epoch occurred successfully")
 
     grafana_info = struct(
-        dashboard_path=GRAFANA_DASHBOARD_PATH_URL,
-        user=GRAFANA_USER,
-        password=GRAFANA_PASSWORD,
+        dashboard_path = GRAFANA_DASHBOARD_PATH_URL,
+        user = GRAFANA_USER,
+        password = GRAFANA_PASSWORD,
     )
 
     output = struct(
-        grafana_info=grafana_info,
-        blockscout_sc_verif_url=None
-        if ("blockscout" in args_with_right_defaults.additional_services) == False
-        else blockscout_sc_verif_url,
-        all_participants=all_participants,
-        pre_funded_accounts=prefunded_accounts,
-        network_params=network_params,
-        network_id=network_id,
-        final_genesis_timestamp=final_genesis_timestamp,
-        genesis_validators_root=genesis_validators_root,
+        grafana_info = grafana_info,
+        blockscout_sc_verif_url = None if ("blockscout" in args_with_right_defaults.additional_services) == False else blockscout_sc_verif_url,
+        all_participants = all_participants,
+        pre_funded_accounts = prefunded_accounts,
+        network_params = network_params,
+        network_id = network_id,
+        final_genesis_timestamp = final_genesis_timestamp,
+        genesis_validators_root = genesis_validators_root,
     )
 
     return output

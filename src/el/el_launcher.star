@@ -10,23 +10,22 @@ reth = import_module("./reth/reth_launcher.star")
 ethereumjs = import_module("./ethereumjs/ethereumjs_launcher.star")
 nimbus_eth1 = import_module("./nimbus-eth1/nimbus_launcher.star")
 
-
 def launch(
-    plan,
-    network_params,
-    el_cl_data,
-    jwt_file,
-    participants,
-    global_log_level,
-    global_node_selectors,
-    global_tolerations,
-    persistent,
-    network_id,
-    num_participants,
-    port_publisher,
-    mev_builder_type,
-    mev_params,
-):
+        plan,
+        network_params,
+        el_cl_data,
+        jwt_file,
+        bq_config_artifact,  # pass artifact here
+        participants,
+        global_log_level,
+        global_node_selectors,
+        global_tolerations,
+        persistent,
+        network_id,
+        num_participants,
+        port_publisher,
+        mev_builder_type,
+        mev_params):
     el_launchers = {
         constants.EL_TYPE.geth: {
             "launcher": geth.new_geth_launcher(
@@ -69,6 +68,7 @@ def launch(
                 el_cl_data,
                 jwt_file,
                 network_params.network,
+                bq_config_artifact,
             ),
             "launch_method": reth.launch,
         },
@@ -77,8 +77,8 @@ def launch(
                 el_cl_data,
                 jwt_file,
                 network_params.network,
-                builder_type=mev_builder_type,
-                mev_params=mev_params,
+                builder_type = mev_builder_type,
+                mev_params = mev_params,
             ),
             "launch_method": reth.launch,
         },
@@ -110,14 +110,17 @@ def launch(
             global_node_selectors,
         )
         tolerations = input_parser.get_client_tolerations(
-            participant.el_tolerations, participant.tolerations, global_tolerations
+            participant.el_tolerations,
+            participant.tolerations,
+            global_tolerations,
         )
 
         if el_type not in el_launchers:
             fail(
                 "Unsupported launcher '{0}', need one of '{1}'".format(
-                    el_type, ",".join(el_launchers.keys())
-                )
+                    el_type,
+                    ",".join(el_launchers.keys()),
+                ),
             )
 
         el_launcher, launch_method = (
@@ -143,6 +146,7 @@ def launch(
             port_publisher,
             index,
         )
+
         # Add participant el additional prometheus metrics
         for metrics_info in el_context.el_metrics_info:
             if metrics_info != None:
