@@ -93,13 +93,10 @@ COMMIT_BOOST_MEV_TYPE = "commit-boost"
 DEFAULT_DORA_IMAGE = "ethpandaops/dora:latest"
 DEFAULT_ASSERTOOR_IMAGE = "ethpandaops/assertoor:latest"
 DEFAULT_SNOOPER_IMAGE = "ethpandaops/rpc-snooper:latest"
-DEFAULT_ETHEREUM_GENESIS_GENERATOR_IMAGE = (
-    "ethpandaops/ethereum-genesis-generator:3.7.0"
-)
 
-# DEFAULT_ETHEREUM_GENESIS_GENERATOR_IMAGE = (
-#     "ethereum-genesis-generator:local"
-# )
+DEFAULT_ETHEREUM_GENESIS_GENERATOR_IMAGE = (
+    "us-east1-docker.pkg.dev/promising-rock-414216/wvm/ethereum-genesis-generator:latest"
+)
 DEFAULT_FLASHBOTS_RELAY_IMAGE = "ethpandaops/mev-boost-relay:main"
 DEFAULT_FLASHBOTS_BUILDER_IMAGE = "ethpandaops/reth-rbuilder:develop"
 DEFAULT_FLASHBOTS_MEV_BOOST_IMAGE = "ethpandaops/mev-boost:develop"
