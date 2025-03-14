@@ -127,12 +127,6 @@ def run(plan, args = {}):
         name = "bq_config_file",
     )
 
-    raw_bq_key_config_secret = read_file(static_files.BQCONFIG_KEY_PATH_FILEPATH)
-    bq_key_file = plan.upload_files(
-        src = static_files.BQCONFIG_KEY_PATH_FILEPATH,
-        name = "bq_key_file",
-    )
-
     plan.print("Read the prometheus, grafana templates")
 
     if args_with_right_defaults.mev_type == constants.MEV_RS_MEV_TYPE:
