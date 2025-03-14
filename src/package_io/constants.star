@@ -1,47 +1,47 @@
 EL_TYPE = struct(
-    geth="geth",
-    erigon="erigon",
-    nethermind="nethermind",
-    besu="besu",
-    reth="reth",
-    reth_builder="reth-builder",
-    ethereumjs="ethereumjs",
-    nimbus="nimbus",
+    geth = "geth",
+    erigon = "erigon",
+    nethermind = "nethermind",
+    besu = "besu",
+    reth = "reth",
+    reth_builder = "reth-builder",
+    ethereumjs = "ethereumjs",
+    nimbus = "nimbus",
 )
 
 CL_TYPE = struct(
-    lighthouse="lighthouse",
-    teku="teku",
-    nimbus="nimbus",
-    prysm="prysm",
-    lodestar="lodestar",
-    grandine="grandine",
+    lighthouse = "lighthouse",
+    teku = "teku",
+    nimbus = "nimbus",
+    prysm = "prysm",
+    lodestar = "lodestar",
+    grandine = "grandine",
 )
 
 VC_TYPE = struct(
-    lighthouse="lighthouse",
-    lodestar="lodestar",
-    nimbus="nimbus",
-    prysm="prysm",
-    teku="teku",
-    vero="vero",
+    lighthouse = "lighthouse",
+    lodestar = "lodestar",
+    nimbus = "nimbus",
+    prysm = "prysm",
+    teku = "teku",
+    vero = "vero",
 )
 
-REMOTE_SIGNER_TYPE = struct(web3signer="web3signer")
+REMOTE_SIGNER_TYPE = struct(web3signer = "web3signer")
 
 GLOBAL_LOG_LEVEL = struct(
-    info="info",
-    error="error",
-    warn="warn",
-    debug="debug",
-    trace="trace",
+    info = "info",
+    error = "error",
+    warn = "warn",
+    debug = "debug",
+    trace = "trace",
 )
 
 CLIENT_TYPES = struct(
-    el="execution",
-    cl="beacon",
-    validator="validator",
-    remote_signer="remote-signer",
+    el = "execution",
+    cl = "beacon",
+    validator = "validator",
+    remote_signer = "remote-signer",
 )
 
 TCP_DISCOVERY_PORT_ID = "tcp-discovery"
@@ -76,6 +76,10 @@ VALIDATOR_KEYS_DIRPATH_ON_SERVICE_CONTAINER = "/validator-keys"
 JWT_MOUNTPOINT_ON_CLIENTS = "/jwt"
 JWT_MOUNT_PATH_ON_CONTAINER = JWT_MOUNTPOINT_ON_CLIENTS + "/jwtsecret"
 
+BQCONFIG_MOUNTPOINT_ON_CLIENTS = "/bq-config"
+BQCONFIG_MOUNT_PATH_ON_CONTAINER = BQCONFIG_MOUNTPOINT_ON_CLIENTS + "/bq-config.json"
+BQCONFIG_KEY_MOUNTPOINT_ON_CLIENTS = "/execution"
+
 KEYMANAGER_MOUNT_PATH_ON_CLIENTS = "/keymanager"
 KEYMANAGER_MOUNT_PATH_ON_CONTAINER = (
     KEYMANAGER_MOUNT_PATH_ON_CLIENTS + "/keymanager.txt"
@@ -88,8 +92,9 @@ COMMIT_BOOST_MEV_TYPE = "commit-boost"
 DEFAULT_DORA_IMAGE = "ethpandaops/dora:latest"
 DEFAULT_ASSERTOOR_IMAGE = "ethpandaops/assertoor:latest"
 DEFAULT_SNOOPER_IMAGE = "ethpandaops/rpc-snooper:latest"
+
 DEFAULT_ETHEREUM_GENESIS_GENERATOR_IMAGE = (
-    "ethpandaops/ethereum-genesis-generator:3.7.0"
+    "us-east1-docker.pkg.dev/promising-rock-414216/wvm/ethereum-genesis-generator:latest"
 )
 DEFAULT_FLASHBOTS_RELAY_IMAGE = "ethpandaops/mev-boost-relay:main"
 DEFAULT_FLASHBOTS_BUILDER_IMAGE = "ethpandaops/reth-rbuilder:develop"
@@ -121,23 +126,22 @@ EIP7732_FORK_VERSION = "0x80000038"
 EIP7805_FORK_EPOCH = 100000003
 EIP7805_FORK_VERSION = "0x90000038"
 
-
 MAX_LABEL_LENGTH = 63
 
 CONTAINER_REGISTRY = struct(
-    dockerhub="/",
-    ghcr="ghcr.io",
-    gcr="gcr.io",
+    dockerhub = "/",
+    ghcr = "ghcr.io",
+    gcr = "gcr.io",
 )
 
 NETWORK_NAME = struct(
-    mainnet="mainnet",
-    sepolia="sepolia",
-    holesky="holesky",
-    ephemery="ephemery",
-    kurtosis="kurtosis",
-    verkle="verkle",
-    shadowfork="shadowfork",
+    mainnet = "mainnet",
+    sepolia = "sepolia",
+    holesky = "holesky",
+    ephemery = "ephemery",
+    kurtosis = "kurtosis",
+    verkle = "verkle",
+    shadowfork = "shadowfork",
 )
 
 PUBLIC_NETWORKS = (

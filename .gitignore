@@ -87,3 +87,4 @@ yarn-error.log
 
 # enclave dumps
 dump/
+static_files/bq-config/*
