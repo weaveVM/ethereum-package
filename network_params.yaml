@@ -1,11 +1,32 @@
 participants:
 # EL
-  - el_type: geth
-    el_image: ethereum/client-go:latest
+  - el_type: reth
+    el_image: loadnetwork/wvm:load-v0.6.0
     el_log_level: ""
-    el_extra_env_vars: {}
+    el_extra_env_vars:
+      PS_HOST: "your.planetscale.host"
+      PS_USERNAME: "your_planetscale_username"
+      PS_PASSWORD: "your_planetscale_password"
+      irys_pk: "some_private_key_here"
+      RUN_EXEX: "true"
+      WVM_DEFAULT_MAX_TX_INPUT_BYTES: "11485760"
+      BLOCKED_PC: 17,18,19,20,21,22
+      ARWEAVE_ACTOR_BUFFER_SIZE: "100000"
+      ARWEAVE_ACTOR_WORKERS: "24"
+      TOKIO_WORKER_THREADS: "48"
+      TOKIO_CORE_THREADS: "24"
+      TOKIO_BLOCKING_THREADS: "24"
+      TOKIO_IO_DRIVER_QUEUE_SIZE: "100000"
     el_extra_labels: {}
-    el_extra_params: []
+    el_extra_params:
+      - "--rpc.eth-proof-window=3888000"
+      - "--txpool.minimal-protocol-fee=500000"
+      - "--rpc.max-request-size=512"
+      - "--rpc.max-response-size=512"
+      - "--txpool.pending-max-size=20480"
+      - "--txpool.basefee-max-size=20480"
+      - "--txpool.queued-max-size=20480"
+      - "--txpool.max-tx-input-bytes=8388608"
     el_tolerations: []
     el_volume_size: 0
     el_min_cpu: 0
@@ -14,7 +35,7 @@ participants:
     el_max_mem: 0
 # CL
     cl_type: lighthouse
-    cl_image: sigp/lighthouse:latest-unstable
+    cl_image: wvm-lighthouse:local
     cl_log_level: ""
     cl_extra_env_vars: {}
     cl_extra_labels: {}
@@ -29,7 +50,7 @@ participants:
     use_separate_vc: true
 # Validator
     vc_type: lighthouse
-    vc_image: sigp/lighthouse:latest-unstable
+    vc_image: wvm-lighthouse:local
     vc_log_level: ""
     vc_extra_env_vars: {}
     vc_extra_labels: {}
@@ -55,7 +76,7 @@ participants:
 # participant specific
     node_selectors: {}
     tolerations: []
-    count: 2
+    count: 1
     snooper_enabled: false
     ethereum_metrics_exporter_enabled: false
     xatu_sentry_enabled: false
@@ -70,7 +91,7 @@ network_params:
   network: kurtosis
   network_id: "3151908"
   deposit_contract_address: "0x4242424242424242424242424242424242424242"
-  seconds_per_slot: 12
+  seconds_per_slot: 1
   num_validator_keys_per_node: 64
   preregistered_validator_keys_mnemonic:
     "giant issue aisle success illegal bike spike
@@ -176,7 +197,7 @@ keymanager_enabled: false
 checkpoint_sync_enabled: false
 checkpoint_sync_url: ""
 ethereum_genesis_generator_params:
-  image: us-east1-docker.pkg.dev/promising-rock-414216/wvm/ethereum-genesis-generator:latest
+  image: loadnetwork/ethereum-genesis-generator:latest # us-east1-docker.pkg.dev/promising-rock-414216/wvm/ethereum-genesis-generator:latest
 port_publisher:
   nat_exit_ip: KURTOSIS_IP_ADDR_PLACEHOLDER
   el:

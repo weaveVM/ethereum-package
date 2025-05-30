@@ -103,5 +103,3 @@ FLASHBOTS_RBUILDER_CONFIG_FILEPATH = (
 COMMIT_BOOST_CONFIG_FILEPATH = (
     STATIC_FILES_DIRPATH + "/mev/commit-boost/cb-config.toml.tmpl"
 )
-
-BQCONFIG_PATH_FILEPATH = STATIC_FILES_DIRPATH + "/bq-config/bq-config.json"

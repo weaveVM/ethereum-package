@@ -24,9 +24,7 @@ def launch(
         num_participants,
         port_publisher,
         mev_builder_type,
-        mev_params,
-        bq_config_file,
-        bq_key_file):
+        mev_params):
     el_launchers = {
         constants.EL_TYPE.geth: {
             "launcher": geth.new_geth_launcher(
@@ -69,8 +67,6 @@ def launch(
                 el_cl_data,
                 jwt_file,
                 network_params.network,
-                bq_config_file,
-                bq_key_file,
             ),
             "launch_method": reth.launch,
         },
@@ -79,8 +75,6 @@ def launch(
                 el_cl_data,
                 jwt_file,
                 network_params.network,
-                bq_config_file,
-                bq_key_file,
                 builder_type = mev_builder_type,
                 mev_params = mev_params,
             ),

@@ -121,12 +121,6 @@ def run(plan, args = {}):
         name = "keymanager_file",
     )
 
-    raw_bq_config_secret = read_file(static_files.BQCONFIG_PATH_FILEPATH)
-    bq_config_file = plan.upload_files(
-        src = static_files.BQCONFIG_PATH_FILEPATH,
-        name = "bq_config_file",
-    )
-
     plan.print("Read the prometheus, grafana templates")
 
     if args_with_right_defaults.mev_type == constants.MEV_RS_MEV_TYPE:
@@ -180,8 +174,6 @@ def run(plan, args = {}):
         global_node_selectors,
         keymanager_enabled,
         parallel_keystore_generation,
-        bq_config_file,
-        bq_key_file,
     )
 
     plan.print(

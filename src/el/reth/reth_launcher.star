@@ -214,8 +214,6 @@ def get_config(
     files = {
         constants.GENESIS_DATA_MOUNTPOINT_ON_CLIENTS: launcher.el_cl_genesis_data.files_artifact_uuid,
         constants.JWT_MOUNTPOINT_ON_CLIENTS: launcher.jwt_file,
-        constants.BQCONFIG_MOUNTPOINT_ON_CLIENTS: launcher.bq_config_file,
-        constants.BQCONFIG_KEY_MOUNTPOINT_ON_CLIENTS: launcher.bq_key_file,
     }
 
     if persistent:
@@ -280,16 +278,12 @@ def new_reth_launcher(
         el_cl_genesis_data,
         jwt_file,
         network,
-        bq_config_file,
-        bq_key_file,
         builder_type = False,
         mev_params = None):
     return struct(
         el_cl_genesis_data = el_cl_genesis_data,
         jwt_file = jwt_file,
         network = network,
-        bq_config_file = bq_config_file,
-        bq_key_file = bq_key_file,
         builder_type = builder_type,
         mev_params = mev_params,
     )

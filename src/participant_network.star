@@ -38,9 +38,7 @@ def launch_participant_network(
         global_tolerations,
         global_node_selectors,
         keymanager_enabled,
-        parallel_keystore_generation,
-        bq_config_file,
-        bq_key_file):
+        parallel_keystore_generation):
     network_id = network_params.network_id
     latest_block = ""
     num_participants = len(args_with_right_defaults.participants)
@@ -146,8 +144,6 @@ def launch_participant_network(
         args_with_right_defaults.port_publisher,
         args_with_right_defaults.mev_type,
         args_with_right_defaults.mev_params,
-        bq_config_file,
-        bq_key_file,
     )
 
     # Launch all consensus layer clients
